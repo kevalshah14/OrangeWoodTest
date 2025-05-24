@@ -50,6 +50,4 @@ The script will:
 
 ## Environment Variables
 
-- `geminiApiKey` - Your Google Gemini API key
-- `MainPrompt` - Prompt for gripper detection
-- `DescriptionPrompt` - Prompt for object description
+- `geminiApiKey` - Your Google Gemini API keys

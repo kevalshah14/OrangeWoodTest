@@ -18,7 +18,12 @@ def describe_image(image_path: str) -> str:
     uploaded = client.files.upload(file=image_path)
 
     # 2) Build the prompt, falling back to an empty string if MainPrompt isn't set
-    prompt = os.getenv("MainPrompt", "")
+    prompt =   (
+    "You are an image classifier. "
+    "Given an image, identify the object you see. "
+    "You don’t need to state how many objects are present—just describe the object in the scene."
+)
+
 
     # 3) Generate content
     resp = client.models.generate_content(
@@ -27,7 +32,7 @@ def describe_image(image_path: str) -> str:
     )
 
     # 4) Return the raw text
-    return resp.text()
+    return resp.text
 
 def detect_object_on_gripper(image_path: str, description: str) -> dict:
     """
@@ -41,7 +46,10 @@ def detect_object_on_gripper(image_path: str, description: str) -> dict:
     uploaded = client.files.upload(file=image_path)
 
     # Build a more specific prompt, instructing JSON output
-    base_prompt = os.getenv("MainPrompt", "")
+    base_prompt = (
+    "You are a gripper detector for a green robotic end-effector equipped with a suction gripper. "
+    "Determine whether the gripper is holding an object, and respond with only “Yes” or “No.”"
+)
     prompt = (
         f"{base_prompt}\n"
         f"Object description: {description}\n"
@@ -52,7 +60,7 @@ def detect_object_on_gripper(image_path: str, description: str) -> dict:
         model="gemini-2.0-flash",
         contents=[prompt, uploaded],
     )
-    response = resp.text()
+    response = resp.text
     return(response
            )
 if __name__ == "__main__":
@@ -63,5 +71,10 @@ if __name__ == "__main__":
 
     # Example: detect whether the gripper is holding something
     img_path = "images/gripper_image.jpg"
+    result = detect_object_on_gripper(img_path, desc)
+    print("Gripper detection result:\n", result, "\n")
+
+    # Example: detect whether the gripper is holding something
+    img_path = "images/gripper_image2.jpg"
     result = detect_object_on_gripper(img_path, desc)
     print("Gripper detection result:\n", result, "\n")
